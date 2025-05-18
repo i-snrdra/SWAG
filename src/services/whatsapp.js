@@ -68,8 +68,9 @@ class WhatsAppService {
                                    msg.message?.extendedTextMessage?.text || 
                                    '';
               
-              // Get sender's number
-              const sender = msg.key.remoteJid.split('@')[0];
+              // Get sender's ID (group or individual)
+              const sender = msg.key.remoteJid;
+              const isGroup = sender.endsWith('@g.us');
               
               console.log('Received message from', sender, ':', messageContent);
 
@@ -81,10 +82,17 @@ class WhatsAppService {
                 );
 
                 if (autoReplies.length > 0) {
-                  // Send auto-reply
+                  // Send auto-reply to the same chat (group or individual)
                   const reply = autoReplies[0].response;
-                  await this.sendMessage(sender, reply);
-                  console.log('Auto-reply sent:', reply);
+                  await this.sock.sendMessage(sender, { text: reply });
+                  
+                  // Save to message history
+                  await pool.execute(
+                    'INSERT INTO messages (receiver, message, status, sent_at) VALUES (?, ?, ?, NOW())',
+                    [sender, reply, 'sent']
+                  );
+                  
+                  console.log('Auto-reply sent to', sender, ':', reply);
                 }
               } catch (error) {
                 console.error('Error processing auto-reply:', error);
@@ -100,14 +108,14 @@ class WhatsAppService {
     }
   }
 
-  async sendMessage(receiver, message) {
+  async sendMessage(receiver, message, isGroup = false) {
     try {
       if (!this.sock) {
         throw new Error('WhatsApp client not initialized');
       }
 
       let target;
-      if (receiver.endsWith('@g.us')) {
+      if (isGroup || receiver.endsWith('@g.us')) {
         target = receiver;
       } else {
         const formattedNumber = receiver.replace(/\D/g, '');
