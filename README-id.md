@@ -96,6 +96,27 @@ http://localhost:3000
 - `npm start` - Jalankan server
 - `npm run dev` - Jalankan server dengan auto-reload
 
+## Daftar To-Do
+
+- [ ] Dukungan Multi Device/Multi Session
+  - Dukungan untuk beberapa akun WhatsApp
+  - Manajemen sesi untuk setiap perangkat
+  - Kemudahan beralih antar akun
+
+- [ ] Dukungan Media yang Ditingkatkan
+  - Lampiran file
+  - Berbagi gambar
+  - Berbagi video
+  - Berbagi vCard
+  - Berbagi dokumen
+
+- [ ] Manajemen Grup yang Ditingkatkan
+  - Membuat grup baru
+  - Menambah/menghapus anggota
+  - Mengubah pengaturan grup
+  - Link undangan grup
+  - Statistik grup
+
 ## Lisensi
 
 Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE](LICENSE) untuk detailnya. 

@@ -96,6 +96,27 @@ http://localhost:3000
 - `npm start` - Start the server
 - `npm run dev` - Start the server with auto-reload
 
+## To-Do List
+
+- [ ] Multi Device/Multi Session Support
+  - Support multiple WhatsApp accounts
+  - Session management for each device
+  - Easy switching between accounts
+
+- [ ] Enhanced Media Support
+  - File attachments
+  - Image sharing
+  - Video sharing
+  - vCard sharing
+  - Document sharing
+
+- [ ] Advanced Group Management
+  - Create new groups
+  - Add/remove members
+  - Change group settings
+  - Group invite links
+  - Group statistics
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
