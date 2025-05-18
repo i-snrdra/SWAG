@@ -4,7 +4,7 @@ const whatsappService = require('../services/whatsapp');
 class MessageController {
   async sendMessage(req, res) {
     try {
-      const { receiver, message } = req.body;
+      const { receiver, message, isGroup } = req.body;
 
       if (!receiver || !message) {
         return res.status(400).json({
@@ -13,40 +13,13 @@ class MessageController {
         });
       }
 
-      // Send message via WhatsApp
-      await whatsappService.sendMessage(receiver, message);
-
-      // Save to database
-      const [result] = await pool.execute(
-        'INSERT INTO messages (receiver, message, status, sent_at) VALUES (?, ?, ?, NOW())',
-        [receiver, message, 'sent']
-      );
-
-      res.json({
-        success: true,
-        message: 'Message sent successfully',
-        data: {
-          id: result.insertId,
-          receiver,
-          message,
-          status: 'sent'
-        }
-      });
+      const result = await whatsappService.sendMessage(receiver, message, isGroup);
+      res.json(result);
     } catch (error) {
       console.error('Error sending message:', error);
-      
-      // Save failed message to database
-      if (req.body.receiver && req.body.message) {
-        await pool.execute(
-          'INSERT INTO messages (receiver, message, status, sent_at) VALUES (?, ?, ?, NOW())',
-          [req.body.receiver, req.body.message, 'failed']
-        );
-      }
-
       res.status(500).json({
         success: false,
-        message: 'Failed to send message',
-        error: error.message
+        message: error.message || 'Failed to send message'
       });
     }
   }
