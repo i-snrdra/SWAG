@@ -55,17 +55,12 @@ mysql -u your_db_user -p your_db_name < database.sql
 npm start
 ```
 
-2. For development with auto-reload:
-```bash
-npm run dev
-```
-
-3. Access the admin dashboard:
+2. Access the admin dashboard:
 ```
 http://localhost:3000
 ```
 
-4. Scan the QR code with your WhatsApp to connect
+3. Scan the QR code with your WhatsApp to connect
 
 ## API Endpoints
 
@@ -90,11 +85,6 @@ http://localhost:3000
 - [dotenv](https://github.com/motdotla/dotenv) - Environment configuration
 - [cors](https://github.com/expressjs/cors) - CORS middleware
 - [qrcode-terminal](https://github.com/gtanner/qrcode-terminal) - QR code generation
-
-## Development
-
-- `npm start` - Start the server
-- `npm run dev` - Start the server with auto-reload
 
 ## To-Do List
 

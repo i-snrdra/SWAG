@@ -55,17 +55,12 @@ mysql -u your_db_user -p your_db_name < database.sql
 npm start
 ```
 
-2. Untuk development dengan auto-reload:
-```bash
-npm run dev
-```
-
-3. Akses dashboard admin:
+2. Akses dashboard admin:
 ```
 http://localhost:3000
 ```
 
-4. Scan QR code dengan WhatsApp Anda untuk terhubung
+3. Scan QR code dengan WhatsApp Anda untuk terhubung
 
 ## API Endpoints
 
@@ -90,11 +85,6 @@ http://localhost:3000
 - [dotenv](https://github.com/motdotla/dotenv) - Konfigurasi environment
 - [cors](https://github.com/expressjs/cors) - Middleware CORS
 - [qrcode-terminal](https://github.com/gtanner/qrcode-terminal) - Pembuatan QR code
-
-## Pengembangan
-
-- `npm start` - Jalankan server
-- `npm run dev` - Jalankan server dengan auto-reload
 
 ## Daftar To-Do
 
