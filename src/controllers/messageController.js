@@ -165,6 +165,23 @@ class MessageController {
       });
     }
   }
+
+  // Get list of groups
+  async getGroups(req, res) {
+    try {
+      const groups = await whatsappService.getGroups();
+      res.json({
+        success: true,
+        data: groups
+      });
+    } catch (error) {
+      console.error('Error getting groups:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to get groups'
+      });
+    }
+  }
 }
 
 module.exports = new MessageController(); 

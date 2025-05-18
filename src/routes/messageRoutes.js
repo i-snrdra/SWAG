@@ -16,5 +16,7 @@ router.delete('/auto-reply/:id', messageController.deleteAutoReply);
 // Get WhatsApp connection status
 router.get('/status', messageController.getStatus);
 
+// Get groups
+router.get('/groups', messageController.getGroups);
 
 module.exports = router; 

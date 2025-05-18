@@ -100,18 +100,44 @@ class WhatsAppService {
     }
   }
 
-  async sendMessage(to, message) {
+  async sendMessage(receiver, message) {
     try {
-      if (!this.isConnected) {
-        throw new Error('WhatsApp is not connected');
+      if (!this.sock) {
+        throw new Error('WhatsApp client not initialized');
       }
 
-      const formattedNumber = to.includes('@s.whatsapp.net') ? to : `${to}@s.whatsapp.net`;
-      
-      await this.sock.sendMessage(formattedNumber, { text: message });
-      return true;
+      let target;
+      if (receiver.endsWith('@g.us')) {
+        target = receiver;
+      } else {
+        const formattedNumber = receiver.replace(/\D/g, '');
+        target = `${formattedNumber}@s.whatsapp.net`;
+      }
+      const messageId = await this.sock.sendMessage(target, { text: message });
+
+      // Save to database
+      await pool.execute(
+        'INSERT INTO messages (receiver, message, status, sent_at) VALUES (?, ?, ?, NOW())',
+        [receiver, message, 'sent']
+      );
+
+      return {
+        success: true,
+        messageId: messageId
+      };
     } catch (error) {
       console.error('Error sending message:', error);
+      
+      // Save failed message to database
+      try {
+        await pool.execute(
+          'INSERT INTO messages (receiver, message, status, sent_at) VALUES (?, ?, ?, NOW())',
+          [receiver, message, 'failed']
+        );
+      } catch (dbError) {
+        console.error('Error saving failed message to database:', dbError);
+      }
+
       throw error;
     }
   }
@@ -121,6 +147,23 @@ class WhatsAppService {
       isConnected: this.isConnected,
       qr: this.qr
     };
+  }
+
+  // Get list of groups
+  async getGroups() {
+    try {
+      const groups = await this.sock.groupFetchAllParticipating();
+      return Object.entries(groups).map(([id, group]) => ({
+        id,
+        name: group.subject,
+        participants: group.participants.length,
+        description: group.desc || '',
+        creation: group.creation ? new Date(group.creation * 1000).toISOString() : null
+      }));
+    } catch (error) {
+      console.error('Error getting groups:', error);
+      throw error;
+    }
   }
 }
 

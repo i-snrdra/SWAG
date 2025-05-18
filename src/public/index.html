@@ -222,6 +222,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showGroupMessage()">
+                        <i class="bi bi-chat-dots-fill me-2"></i>Kirim ke Grup
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="#" onclick="showMessageHistory()">
                         <i class="bi bi-clock-history me-2"></i>History Pesan
                     </a>
@@ -400,6 +405,71 @@
             </div>
         </div>
 
+        <!-- Group Message Section -->
+        <div id="group-message-section" style="display: none;">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Kirim Pesan ke Grup</h4>
+                    <form id="group-message-form" class="mb-4">
+                        <div class="mb-3">
+                            <label for="group-message" class="form-label">Pesan</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-chat-left-text-fill"></i></span>
+                                <textarea class="form-control" id="group-message" rows="3" placeholder="Ketik pesan Anda di sini..."></textarea>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <button type="button" class="btn btn-outline-primary" onclick="loadGroups()">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Refresh Daftar Grup
+                            </button>
+                            <div>
+                                <button type="button" class="btn btn-outline-secondary me-2" onclick="selectAllGroups()">
+                                    <i class="bi bi-check-all me-2"></i>Pilih Semua
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" onclick="deselectAllGroups()">
+                                    <i class="bi bi-x-lg me-2"></i>Hapus Pilihan
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="groups-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="select-all-groups">
+                                            </div>
+                                        </th>
+                                        <th>Nama Grup</th>
+                                        <th>Jumlah Anggota</th>
+                                        <th>Deskripsi</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">
+                            <i class="bi bi-send-fill me-2"></i>Kirim ke Grup Terpilih
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <!-- Progress Section -->
+            <div id="group-send-progress" class="card" style="display: none;">
+                <div class="card-body">
+                    <h5 class="card-title">Progress Pengiriman</h5>
+                    <div class="progress mb-3">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span id="group-progress-status">Mempersiapkan pengiriman...</span>
+                        <span id="group-progress-count">0/0</span>
+                    </div>
+                    <div id="group-progress-details" class="small text-muted"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Message History Section -->
         <div id="message-history-section" style="display: none;">
             <div class="card">
@@ -493,6 +563,7 @@
             document.getElementById('dashboard-section').style.display = 'block';
             document.getElementById('send-message-section').style.display = 'none';
             document.getElementById('mass-send-section').style.display = 'none';
+            document.getElementById('group-message-section').style.display = 'none';
             document.getElementById('message-history-section').style.display = 'none';
             document.getElementById('auto-reply-section').style.display = 'none';
             updateActiveNav('dashboard');
@@ -503,6 +574,7 @@
             document.getElementById('dashboard-section').style.display = 'none';
             document.getElementById('send-message-section').style.display = 'block';
             document.getElementById('mass-send-section').style.display = 'none';
+            document.getElementById('group-message-section').style.display = 'none';
             document.getElementById('message-history-section').style.display = 'none';
             document.getElementById('auto-reply-section').style.display = 'none';
             updateActiveNav('send-message');
@@ -512,15 +584,28 @@
             document.getElementById('dashboard-section').style.display = 'none';
             document.getElementById('send-message-section').style.display = 'none';
             document.getElementById('mass-send-section').style.display = 'block';
+            document.getElementById('group-message-section').style.display = 'none';
             document.getElementById('message-history-section').style.display = 'none';
             document.getElementById('auto-reply-section').style.display = 'none';
             updateActiveNav('mass-send');
+        }
+
+        function showGroupMessage() {
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('send-message-section').style.display = 'none';
+            document.getElementById('mass-send-section').style.display = 'none';
+            document.getElementById('group-message-section').style.display = 'block';
+            document.getElementById('message-history-section').style.display = 'none';
+            document.getElementById('auto-reply-section').style.display = 'none';
+            updateActiveNav('group-message');
+            loadGroups();
         }
 
         function showMessageHistory() {
             document.getElementById('dashboard-section').style.display = 'none';
             document.getElementById('send-message-section').style.display = 'none';
             document.getElementById('mass-send-section').style.display = 'none';
+            document.getElementById('group-message-section').style.display = 'none';
             document.getElementById('message-history-section').style.display = 'block';
             document.getElementById('auto-reply-section').style.display = 'none';
             loadMessageHistory();
@@ -531,6 +616,7 @@
             document.getElementById('dashboard-section').style.display = 'none';
             document.getElementById('send-message-section').style.display = 'none';
             document.getElementById('mass-send-section').style.display = 'none';
+            document.getElementById('group-message-section').style.display = 'none';
             document.getElementById('message-history-section').style.display = 'none';
             document.getElementById('auto-reply-section').style.display = 'block';
             loadAutoReplies();
@@ -827,6 +913,135 @@
                 const progress = ((i + 1) / receivers.length) * 100;
                 progressBar.style.width = `${progress}%`;
                 progressCount.textContent = `${i + 1}/${receivers.length}`;
+                progressStatus.textContent = `Mengirim pesan... (${successCount} berhasil, ${failCount} gagal)`;
+            }
+
+            progressStatus.textContent = `Selesai! ${successCount} berhasil, ${failCount} gagal`;
+            loadMessageHistory();
+        });
+
+        // Fungsi untuk memuat daftar grup
+        async function loadGroups() {
+            try {
+                const response = await fetch('http://localhost:3000/api/groups');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const tbody = document.querySelector('#groups-table tbody');
+                    tbody.innerHTML = '';
+                    
+                    data.data.forEach(group => {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>
+                                    <div class="form-check">
+                                        <input class="form-check-input group-checkbox" type="checkbox" value="${group.id}" data-name="${group.name}">
+                                    </div>
+                                </td>
+                                <td>${group.name}</td>
+                                <td>${group.participants}</td>
+                                <td>${group.description || '-'}</td>
+                            </tr>
+                        `;
+                    });
+
+                    // Update select all checkbox
+                    document.getElementById('select-all-groups').checked = false;
+                }
+            } catch (error) {
+                console.error('Error loading groups:', error);
+                alert('Gagal memuat daftar grup');
+            }
+        }
+
+        // Fungsi untuk memilih semua grup
+        function selectAllGroups() {
+            document.querySelectorAll('.group-checkbox').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            document.getElementById('select-all-groups').checked = true;
+        }
+
+        // Fungsi untuk menghapus semua pilihan grup
+        function deselectAllGroups() {
+            document.querySelectorAll('.group-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            document.getElementById('select-all-groups').checked = false;
+        }
+
+        // Event listener untuk checkbox "Pilih Semua"
+        document.getElementById('select-all-groups').addEventListener('change', function() {
+            document.querySelectorAll('.group-checkbox').forEach(checkbox => {
+                checkbox.checked = this.checked;
+            });
+        });
+
+        // Event listener untuk form kirim pesan ke grup
+        document.getElementById('group-message-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = document.getElementById('group-message').value;
+            const selectedGroups = Array.from(document.querySelectorAll('.group-checkbox:checked')).map(checkbox => ({
+                id: checkbox.value,
+                name: checkbox.dataset.name
+            }));
+
+            if (selectedGroups.length === 0) {
+                alert('Pilih minimal satu grup');
+                return;
+            }
+
+            if (!message) {
+                alert('Masukkan pesan yang akan dikirim');
+                return;
+            }
+
+            // Tampilkan progress
+            const progressSection = document.getElementById('group-send-progress');
+            const progressBar = progressSection.querySelector('.progress-bar');
+            const progressStatus = document.getElementById('group-progress-status');
+            const progressCount = document.getElementById('group-progress-count');
+            const progressDetails = document.getElementById('group-progress-details');
+            
+            progressSection.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressStatus.textContent = 'Memulai pengiriman...';
+            progressCount.textContent = `0/${selectedGroups.length}`;
+            progressDetails.innerHTML = '';
+
+            let successCount = 0;
+            let failCount = 0;
+
+            for (let i = 0; i < selectedGroups.length; i++) {
+                try {
+                    const response = await fetch('http://localhost:3000/api/send-message', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            receiver: selectedGroups[i].id,
+                            message: message
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        successCount++;
+                        progressDetails.innerHTML += `<div class="text-success">✓ ${selectedGroups[i].name}: Berhasil</div>`;
+                    } else {
+                        failCount++;
+                        progressDetails.innerHTML += `<div class="text-danger">✗ ${selectedGroups[i].name}: ${data.message}</div>`;
+                    }
+                } catch (error) {
+                    failCount++;
+                    progressDetails.innerHTML += `<div class="text-danger">✗ ${selectedGroups[i].name}: Error</div>`;
+                }
+
+                // Update progress
+                const progress = ((i + 1) / selectedGroups.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                progressCount.textContent = `${i + 1}/${selectedGroups.length}`;
                 progressStatus.textContent = `Mengirim pesan... (${successCount} berhasil, ${failCount} gagal)`;
             }
 
