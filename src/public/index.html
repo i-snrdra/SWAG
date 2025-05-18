@@ -336,7 +336,7 @@
 
         <!-- Send Message Section -->
         <div id="send-message-section" style="display: none;">
-            <div class="card">
+            <div class="card mb-4">
                 <div class="card-body">
                     <h4 class="card-title mb-4">Kirim Pesan</h4>
                     <form id="send-message-form">
@@ -346,12 +346,37 @@
                                 <span class="input-group-text"><i class="bi bi-telephone-fill"></i></span>
                                 <input type="text" class="form-control" id="receiver" placeholder="628xxxxxxxxxx">
                             </div>
+                            <small class="text-muted">Contoh: 628123456789</small>
                         </div>
                         <div class="mb-3">
                             <label for="message" class="form-label">Pesan</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-chat-left-text-fill"></i></span>
                                 <textarea class="form-control" id="message" rows="3" placeholder="Ketik pesan Anda di sini..."></textarea>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Lampiran</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-paperclip"></i></span>
+                                <input type="file" class="form-control" id="attachment" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.vcf">
+                            </div>
+                            <small class="text-muted">Dukungan: Gambar, Video, Dokumen, vCard (maks. 16MB)</small>
+                        </div>
+                        <div id="attachment-preview" class="mb-3" style="display: none;">
+                            <div class="card">
+                                <div class="card-body p-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-file-earmark me-2 fs-4"></i>
+                                        <div class="flex-grow-1">
+                                            <div class="small text-muted" id="attachment-name"></div>
+                                            <div class="small text-muted" id="attachment-size"></div>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeAttachment()">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">
@@ -381,6 +406,30 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-chat-left-text-fill"></i></span>
                                 <textarea class="form-control" id="mass-message" rows="3" placeholder="Ketik pesan Anda di sini..."></textarea>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Lampiran</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-paperclip"></i></span>
+                                <input type="file" class="form-control" id="mass-attachment" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.vcf">
+                            </div>
+                            <small class="text-muted">Dukungan: Gambar, Video, Dokumen, vCard (maks. 16MB)</small>
+                        </div>
+                        <div id="mass-attachment-preview" class="mb-3" style="display: none;">
+                            <div class="card">
+                                <div class="card-body p-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-file-earmark me-2 fs-4"></i>
+                                        <div class="flex-grow-1">
+                                            <div class="small text-muted" id="mass-attachment-name"></div>
+                                            <div class="small text-muted" id="mass-attachment-size"></div>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeMassAttachment()">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">
@@ -416,6 +465,30 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-chat-left-text-fill"></i></span>
                                 <textarea class="form-control" id="group-message" rows="3" placeholder="Ketik pesan Anda di sini..."></textarea>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Lampiran</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-paperclip"></i></span>
+                                <input type="file" class="form-control" id="group-attachment" accept="image/*,video/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.vcf">
+                            </div>
+                            <small class="text-muted">Dukungan: Gambar, Video, Dokumen, vCard (maks. 16MB)</small>
+                        </div>
+                        <div id="group-attachment-preview" class="mb-3" style="display: none;">
+                            <div class="card">
+                                <div class="card-body p-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-file-earmark me-2 fs-4"></i>
+                                        <div class="flex-grow-1">
+                                            <div class="small text-muted" id="group-attachment-name"></div>
+                                            <div class="small text-muted" id="group-attachment-size"></div>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeGroupAttachment()">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -566,8 +639,8 @@
             document.getElementById('group-message-section').style.display = 'none';
             document.getElementById('message-history-section').style.display = 'none';
             document.getElementById('auto-reply-section').style.display = 'none';
-            updateActiveNav('dashboard');
-            loadDashboardData(); // Memuat data saat menampilkan dashboard
+            updateActiveNav('Dashboard');
+            loadDashboardData();
         }
 
         function showSendMessage() {
@@ -577,7 +650,7 @@
             document.getElementById('group-message-section').style.display = 'none';
             document.getElementById('message-history-section').style.display = 'none';
             document.getElementById('auto-reply-section').style.display = 'none';
-            updateActiveNav('send-message');
+            updateActiveNav('SendMessage');
         }
 
         function showMassSend() {
@@ -587,7 +660,7 @@
             document.getElementById('group-message-section').style.display = 'none';
             document.getElementById('message-history-section').style.display = 'none';
             document.getElementById('auto-reply-section').style.display = 'none';
-            updateActiveNav('mass-send');
+            updateActiveNav('MassSend');
         }
 
         function showGroupMessage() {
@@ -597,7 +670,7 @@
             document.getElementById('group-message-section').style.display = 'block';
             document.getElementById('message-history-section').style.display = 'none';
             document.getElementById('auto-reply-section').style.display = 'none';
-            updateActiveNav('group-message');
+            updateActiveNav('GroupMessage');
             loadGroups();
         }
 
@@ -609,7 +682,7 @@
             document.getElementById('message-history-section').style.display = 'block';
             document.getElementById('auto-reply-section').style.display = 'none';
             loadMessageHistory();
-            updateActiveNav('message-history');
+            updateActiveNav('MessageHistory');
         }
 
         function showAutoReply() {
@@ -620,14 +693,17 @@
             document.getElementById('message-history-section').style.display = 'none';
             document.getElementById('auto-reply-section').style.display = 'block';
             loadAutoReplies();
-            updateActiveNav('auto-reply');
+            updateActiveNav('AutoReply');
         }
 
         function updateActiveNav(section) {
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
             });
-            document.querySelector(`[onclick="show${section.charAt(0).toUpperCase() + section.slice(1)}()"]`).classList.add('active');
+            const activeLink = document.querySelector(`[onclick="show${section}()"]`);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
         }
 
         // Fungsi untuk mengecek status koneksi
@@ -660,25 +736,88 @@
             }
         }
 
-        // Fungsi untuk mengirim pesan
+        // Fungsi untuk menangani upload file
+        function handleFileUpload(input, previewId, nameId, sizeId) {
+            const file = input.files[0];
+            if (file) {
+                const preview = document.getElementById(previewId);
+                const name = document.getElementById(nameId);
+                const size = document.getElementById(sizeId);
+                
+                name.textContent = file.name;
+                size.textContent = formatFileSize(file.size);
+                preview.style.display = 'block';
+            }
+        }
+
+        // Fungsi untuk menghapus file
+        function removeAttachment() {
+            document.getElementById('attachment').value = '';
+            document.getElementById('attachment-preview').style.display = 'none';
+        }
+
+        function removeMassAttachment() {
+            document.getElementById('mass-attachment').value = '';
+            document.getElementById('mass-attachment-preview').style.display = 'none';
+        }
+
+        function removeGroupAttachment() {
+            document.getElementById('group-attachment').value = '';
+            document.getElementById('group-attachment-preview').style.display = 'none';
+        }
+
+        // Fungsi untuk format ukuran file
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Event listeners untuk file upload
+        document.getElementById('attachment').addEventListener('change', function() {
+            handleFileUpload(this, 'attachment-preview', 'attachment-name', 'attachment-size');
+        });
+
+        document.getElementById('mass-attachment').addEventListener('change', function() {
+            handleFileUpload(this, 'mass-attachment-preview', 'mass-attachment-name', 'mass-attachment-size');
+        });
+
+        document.getElementById('group-attachment').addEventListener('change', function() {
+            handleFileUpload(this, 'group-attachment-preview', 'group-attachment-name', 'group-attachment-size');
+        });
+
+        // Event listener untuk form submit
         document.getElementById('send-message-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             const receiver = document.getElementById('receiver').value;
             const message = document.getElementById('message').value;
+            const attachment = document.getElementById('attachment').files[0];
+
+            if (!receiver || (!message && !attachment)) {
+                alert('Nomor penerima dan pesan atau lampiran harus diisi');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('receiver', receiver);
+            formData.append('message', message);
+            if (attachment) {
+                formData.append('attachment', attachment);
+            }
 
             try {
                 const response = await fetch('http://localhost:3000/api/send-message', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ receiver, message })
+                    body: formData
                 });
 
                 const data = await response.json();
                 if (data.success) {
                     alert('Pesan berhasil dikirim!');
                     document.getElementById('send-message-form').reset();
+                    removeAttachment();
                     loadMessageHistory();
                 } else {
                     alert('Gagal mengirim pesan: ' + data.message);
@@ -687,6 +826,145 @@
                 console.error('Error sending message:', error);
                 alert('Terjadi kesalahan saat mengirim pesan');
             }
+        });
+
+        // Update fungsi mass send untuk mendukung file
+        document.getElementById('mass-send-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const receivers = document.getElementById('receivers').value
+                .split(',')
+                .map(num => num.trim())
+                .filter(num => num);
+            const message = document.getElementById('mass-message').value;
+            const attachment = document.getElementById('mass-attachment').files[0];
+
+            if (receivers.length === 0 || (!message && !attachment)) {
+                alert('Masukkan nomor penerima dan pesan atau lampiran');
+                return;
+            }
+
+            // Tampilkan progress
+            const progressSection = document.getElementById('mass-send-progress');
+            const progressBar = progressSection.querySelector('.progress-bar');
+            const progressStatus = document.getElementById('progress-status');
+            const progressCount = document.getElementById('progress-count');
+            const progressDetails = document.getElementById('progress-details');
+            
+            progressSection.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressStatus.textContent = 'Memulai pengiriman...';
+            progressCount.textContent = `0/${receivers.length}`;
+            progressDetails.innerHTML = '';
+
+            let successCount = 0;
+            let failCount = 0;
+
+            for (let i = 0; i < receivers.length; i++) {
+                try {
+                    const formData = new FormData();
+                    formData.append('receiver', receivers[i]);
+                    formData.append('message', message);
+                    if (attachment) {
+                        formData.append('attachment', attachment);
+                    }
+
+                    const response = await fetch('http://localhost:3000/api/send-message', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        successCount++;
+                        progressDetails.innerHTML += `<div class="text-success">✓ ${receivers[i]}: Berhasil</div>`;
+                    } else {
+                        failCount++;
+                        progressDetails.innerHTML += `<div class="text-danger">✗ ${receivers[i]}: ${data.message}</div>`;
+                    }
+                } catch (error) {
+                    failCount++;
+                    progressDetails.innerHTML += `<div class="text-danger">✗ ${receivers[i]}: Error</div>`;
+                }
+
+                // Update progress
+                const progress = ((i + 1) / receivers.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                progressCount.textContent = `${i + 1}/${receivers.length}`;
+                progressStatus.textContent = `Mengirim pesan... (${successCount} berhasil, ${failCount} gagal)`;
+            }
+
+            progressStatus.textContent = `Selesai! ${successCount} berhasil, ${failCount} gagal`;
+            loadMessageHistory();
+        });
+
+        // Update fungsi group send untuk mendukung file
+        document.getElementById('group-message-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const message = document.getElementById('group-message').value;
+            const attachment = document.getElementById('group-attachment').files[0];
+            const selectedGroups = Array.from(document.querySelectorAll('.group-checkbox:checked')).map(checkbox => ({
+                id: checkbox.value,
+                name: checkbox.dataset.name
+            }));
+
+            if (selectedGroups.length === 0 || (!message && !attachment)) {
+                alert('Pilih minimal satu grup dan masukkan pesan atau lampiran');
+                return;
+            }
+
+            // Tampilkan progress
+            const progressSection = document.getElementById('group-send-progress');
+            const progressBar = progressSection.querySelector('.progress-bar');
+            const progressStatus = document.getElementById('group-progress-status');
+            const progressCount = document.getElementById('group-progress-count');
+            const progressDetails = document.getElementById('group-progress-details');
+            
+            progressSection.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressStatus.textContent = 'Memulai pengiriman...';
+            progressCount.textContent = `0/${selectedGroups.length}`;
+            progressDetails.innerHTML = '';
+
+            let successCount = 0;
+            let failCount = 0;
+
+            for (let i = 0; i < selectedGroups.length; i++) {
+                try {
+                    const formData = new FormData();
+                    formData.append('receiver', selectedGroups[i].id);
+                    formData.append('message', message);
+                    formData.append('isGroup', 'true');
+                    if (attachment) {
+                        formData.append('attachment', attachment);
+                    }
+
+                    const response = await fetch('http://localhost:3000/api/send-message', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        successCount++;
+                        progressDetails.innerHTML += `<div class="text-success">✓ ${selectedGroups[i].name}: Berhasil</div>`;
+                    } else {
+                        failCount++;
+                        progressDetails.innerHTML += `<div class="text-danger">✗ ${selectedGroups[i].name}: ${data.message}</div>`;
+                    }
+                } catch (error) {
+                    failCount++;
+                    progressDetails.innerHTML += `<div class="text-danger">✗ ${selectedGroups[i].name}: Error</div>`;
+                }
+
+                // Update progress
+                const progress = ((i + 1) / selectedGroups.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                progressCount.textContent = `${i + 1}/${selectedGroups.length}`;
+                progressStatus.textContent = `Mengirim pesan... (${successCount} berhasil, ${failCount} gagal)`;
+            }
+
+            progressStatus.textContent = `Selesai! ${successCount} berhasil, ${failCount} gagal`;
+            loadMessageHistory();
         });
 
         // Fungsi untuk memuat history pesan
@@ -848,78 +1126,6 @@
         checkConnection();
         loadDashboardData();
 
-        // Fungsi untuk mengirim pesan massal
-        document.getElementById('mass-send-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const receivers = document.getElementById('receivers').value
-                .split(',')
-                .map(num => num.trim())
-                .filter(num => num);
-            const message = document.getElementById('mass-message').value;
-
-            if (receivers.length === 0) {
-                alert('Mohon masukkan minimal satu nomor penerima');
-                return;
-            }
-
-            if (!message) {
-                alert('Mohon masukkan pesan');
-                return;
-            }
-
-            // Tampilkan progress
-            const progressSection = document.getElementById('mass-send-progress');
-            const progressBar = progressSection.querySelector('.progress-bar');
-            const progressStatus = document.getElementById('progress-status');
-            const progressCount = document.getElementById('progress-count');
-            const progressDetails = document.getElementById('progress-details');
-            
-            progressSection.style.display = 'block';
-            progressBar.style.width = '0%';
-            progressStatus.textContent = 'Memulai pengiriman...';
-            progressCount.textContent = `0/${receivers.length}`;
-            progressDetails.innerHTML = '';
-
-            let successCount = 0;
-            let failCount = 0;
-
-            for (let i = 0; i < receivers.length; i++) {
-                try {
-                    const response = await fetch('http://localhost:3000/api/send-message', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ 
-                            receiver: receivers[i], 
-                            message: message 
-                        })
-                    });
-
-                    const data = await response.json();
-                    if (data.success) {
-                        successCount++;
-                        progressDetails.innerHTML += `<div class="text-success">✓ ${receivers[i]}: Berhasil</div>`;
-                    } else {
-                        failCount++;
-                        progressDetails.innerHTML += `<div class="text-danger">✗ ${receivers[i]}: ${data.message}</div>`;
-                    }
-                } catch (error) {
-                    failCount++;
-                    progressDetails.innerHTML += `<div class="text-danger">✗ ${receivers[i]}: Error</div>`;
-                }
-
-                // Update progress
-                const progress = ((i + 1) / receivers.length) * 100;
-                progressBar.style.width = `${progress}%`;
-                progressCount.textContent = `${i + 1}/${receivers.length}`;
-                progressStatus.textContent = `Mengirim pesan... (${successCount} berhasil, ${failCount} gagal)`;
-            }
-
-            progressStatus.textContent = `Selesai! ${successCount} berhasil, ${failCount} gagal`;
-            loadMessageHistory();
-        });
-
         // Fungsi untuk memuat daftar grup
         async function loadGroups() {
             try {
@@ -975,78 +1181,6 @@
             document.querySelectorAll('.group-checkbox').forEach(checkbox => {
                 checkbox.checked = this.checked;
             });
-        });
-
-        // Event listener untuk form kirim pesan ke grup
-        document.getElementById('group-message-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const message = document.getElementById('group-message').value;
-            const selectedGroups = Array.from(document.querySelectorAll('.group-checkbox:checked')).map(checkbox => ({
-                id: checkbox.value,
-                name: checkbox.dataset.name
-            }));
-
-            if (selectedGroups.length === 0) {
-                alert('Pilih minimal satu grup');
-                return;
-            }
-
-            if (!message) {
-                alert('Masukkan pesan yang akan dikirim');
-                return;
-            }
-
-            // Tampilkan progress
-            const progressSection = document.getElementById('group-send-progress');
-            const progressBar = progressSection.querySelector('.progress-bar');
-            const progressStatus = document.getElementById('group-progress-status');
-            const progressCount = document.getElementById('group-progress-count');
-            const progressDetails = document.getElementById('group-progress-details');
-            
-            progressSection.style.display = 'block';
-            progressBar.style.width = '0%';
-            progressStatus.textContent = 'Memulai pengiriman...';
-            progressCount.textContent = `0/${selectedGroups.length}`;
-            progressDetails.innerHTML = '';
-
-            let successCount = 0;
-            let failCount = 0;
-
-            for (let i = 0; i < selectedGroups.length; i++) {
-                try {
-                    const response = await fetch('http://localhost:3000/api/send-message', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ 
-                            receiver: selectedGroups[i].id,
-                            message: message
-                        })
-                    });
-
-                    const data = await response.json();
-                    if (data.success) {
-                        successCount++;
-                        progressDetails.innerHTML += `<div class="text-success">✓ ${selectedGroups[i].name}: Berhasil</div>`;
-                    } else {
-                        failCount++;
-                        progressDetails.innerHTML += `<div class="text-danger">✗ ${selectedGroups[i].name}: ${data.message}</div>`;
-                    }
-                } catch (error) {
-                    failCount++;
-                    progressDetails.innerHTML += `<div class="text-danger">✗ ${selectedGroups[i].name}: Error</div>`;
-                }
-
-                // Update progress
-                const progress = ((i + 1) / selectedGroups.length) * 100;
-                progressBar.style.width = `${progress}%`;
-                progressCount.textContent = `${i + 1}/${selectedGroups.length}`;
-                progressStatus.textContent = `Mengirim pesan... (${successCount} berhasil, ${failCount} gagal)`;
-            }
-
-            progressStatus.textContent = `Selesai! ${successCount} berhasil, ${failCount} gagal`;
-            loadMessageHistory();
         });
     </script>
 </body>

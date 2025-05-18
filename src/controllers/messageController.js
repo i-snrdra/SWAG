@@ -1,19 +1,53 @@
 const pool = require('../db/connection');
 const whatsappService = require('../services/whatsapp');
+const path = require('path');
+const fs = require('fs');
+
+// Create uploads directory if it doesn't exist
+const uploadsDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
 
 class MessageController {
   async sendMessage(req, res) {
     try {
       const { receiver, message, isGroup } = req.body;
+      let attachment = null;
 
-      if (!receiver || !message) {
+      if (req.file) {
+        const filePath = req.file.path;
+        const filename = req.file.originalname;
+        const mimetype = req.file.mimetype;
+        
+        // Determine attachment type
+        let type;
+        if (mimetype.startsWith('image/')) {
+          type = 'image';
+        } else if (mimetype.startsWith('video/')) {
+          type = 'video';
+        } else if (mimetype === 'text/vcard') {
+          type = 'vcard';
+        } else {
+          type = 'document';
+        }
+
+        attachment = {
+          type,
+          path: filePath,
+          filename,
+          mimetype
+        };
+      }
+      
+      if (!receiver || (!message && !attachment)) {
         return res.status(400).json({
           success: false,
-          message: 'Receiver and message are required'
+          message: 'Receiver and either message or attachment are required'
         });
       }
 
-      const result = await whatsappService.sendMessage(receiver, message, isGroup);
+      const result = await whatsappService.sendMessage(receiver, message || '', isGroup, attachment);
       res.json(result);
     } catch (error) {
       console.error('Error sending message:', error);

@@ -93,12 +93,12 @@ http://localhost:3000
   - Session management for each device
   - Easy switching between accounts
 
-- [ ] Enhanced Media Support
-  - File attachments
-  - Image sharing
-  - Video sharing
-  - vCard sharing
-  - Document sharing
+- [x] Enhanced Media Support
+  - [x] File attachments
+  - [x] Image sharing
+  - [x] Video sharing
+  - [x] vCard sharing
+  - [x] Document sharing
 
 - [ ] Advanced Group Management
   - Create new groups

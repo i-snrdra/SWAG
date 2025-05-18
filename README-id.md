@@ -93,12 +93,12 @@ http://localhost:3000
   - Manajemen sesi untuk setiap perangkat
   - Kemudahan beralih antar akun
 
-- [ ] Dukungan Media yang Ditingkatkan
-  - Lampiran file
-  - Berbagi gambar
-  - Berbagi video
-  - Berbagi vCard
-  - Berbagi dokumen
+- [x] Dukungan Media yang Ditingkatkan
+  - [x] Lampiran file
+  - [x] Berbagi gambar
+  - [x] Berbagi video
+  - [x] Berbagi vCard
+  - [x] Berbagi dokumen
 
 - [ ] Manajemen Grup yang Ditingkatkan
   - Membuat grup baru

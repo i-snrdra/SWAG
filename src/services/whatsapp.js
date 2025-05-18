@@ -108,7 +108,7 @@ class WhatsAppService {
     }
   }
 
-  async sendMessage(receiver, message, isGroup = false) {
+  async sendMessage(receiver, message, isGroup = false, attachment = null) {
     try {
       if (!this.sock) {
         throw new Error('WhatsApp client not initialized');
@@ -121,12 +121,63 @@ class WhatsAppService {
         const formattedNumber = receiver.replace(/\D/g, '');
         target = `${formattedNumber}@s.whatsapp.net`;
       }
-      const messageId = await this.sock.sendMessage(target, { text: message });
+
+      let messageContent = {};
+      
+      if (attachment) {
+        const { type, path: filePath, filename, mimetype } = attachment;
+        
+        // Read file
+        const fileBuffer = fs.readFileSync(filePath);
+        
+        switch (type) {
+          case 'image':
+            messageContent = {
+              image: fileBuffer,
+              caption: message
+            };
+            break;
+            
+          case 'video':
+            messageContent = {
+              video: fileBuffer,
+              caption: message
+            };
+            break;
+            
+          case 'document':
+            messageContent = {
+              document: fileBuffer,
+              fileName: filename,
+              mimetype: mimetype,
+              caption: message
+            };
+            break;
+            
+          case 'vcard':
+            messageContent = {
+              contacts: {
+                displayName: filename,
+                contacts: [{
+                  vcard: fileBuffer.toString()
+                }]
+              }
+            };
+            break;
+            
+          default:
+            messageContent = { text: message };
+        }
+      } else {
+        messageContent = { text: message };
+      }
+
+      const messageId = await this.sock.sendMessage(target, messageContent);
 
       // Save to database
       await pool.execute(
-        'INSERT INTO messages (receiver, message, status, sent_at) VALUES (?, ?, ?, NOW())',
-        [receiver, message, 'sent']
+        'INSERT INTO messages (receiver, message, status, sent_at, attachment_type, attachment_name) VALUES (?, ?, ?, NOW(), ?, ?)',
+        [receiver, message, 'sent', attachment?.type || null, attachment?.filename || null]
       );
 
       return {
@@ -139,8 +190,8 @@ class WhatsAppService {
       // Save failed message to database
       try {
         await pool.execute(
-          'INSERT INTO messages (receiver, message, status, sent_at) VALUES (?, ?, ?, NOW())',
-          [receiver, message, 'failed']
+          'INSERT INTO messages (receiver, message, status, sent_at, attachment_type, attachment_name) VALUES (?, ?, ?, NOW(), ?, ?)',
+          [receiver, message, 'failed', attachment?.type || null, attachment?.filename || null]
         );
       } catch (dbError) {
         console.error('Error saving failed message to database:', dbError);
