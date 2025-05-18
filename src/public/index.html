@@ -217,6 +217,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="showMassSend()">
+                        <i class="bi bi-people-fill me-2"></i>Mass Send
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="#" onclick="showMessageHistory()">
                         <i class="bi bi-clock-history me-2"></i>History Pesan
                     </a>
@@ -352,6 +357,49 @@
             </div>
         </div>
 
+        <!-- Mass Send Section -->
+        <div id="mass-send-section" style="display: none;">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h4 class="card-title mb-4">Mass Send</h4>
+                    <form id="mass-send-form">
+                        <div class="mb-3">
+                            <label for="receivers" class="form-label">Nomor Penerima (pisahkan dengan koma)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-telephone-fill"></i></span>
+                                <textarea class="form-control" id="receivers" rows="3" placeholder="628xxxxxxxxxx, 628xxxxxxxxxx, 628xxxxxxxxxx"></textarea>
+                            </div>
+                            <small class="text-muted">Contoh: 628123456789, 628987654321</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="mass-message" class="form-label">Pesan</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-chat-left-text-fill"></i></span>
+                                <textarea class="form-control" id="mass-message" rows="3" placeholder="Ketik pesan Anda di sini..."></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-send-fill me-2"></i>Kirim Massal
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <!-- Progress Section -->
+            <div id="mass-send-progress" class="card" style="display: none;">
+                <div class="card-body">
+                    <h5 class="card-title">Progress Pengiriman</h5>
+                    <div class="progress mb-3">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span id="progress-status">Mempersiapkan pengiriman...</span>
+                        <span id="progress-count">0/0</span>
+                    </div>
+                    <div id="progress-details" class="small text-muted"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Message History Section -->
         <div id="message-history-section" style="display: none;">
             <div class="card">
@@ -444,6 +492,7 @@
         function showDashboard() {
             document.getElementById('dashboard-section').style.display = 'block';
             document.getElementById('send-message-section').style.display = 'none';
+            document.getElementById('mass-send-section').style.display = 'none';
             document.getElementById('message-history-section').style.display = 'none';
             document.getElementById('auto-reply-section').style.display = 'none';
             updateActiveNav('dashboard');
@@ -453,14 +502,25 @@
         function showSendMessage() {
             document.getElementById('dashboard-section').style.display = 'none';
             document.getElementById('send-message-section').style.display = 'block';
+            document.getElementById('mass-send-section').style.display = 'none';
             document.getElementById('message-history-section').style.display = 'none';
             document.getElementById('auto-reply-section').style.display = 'none';
             updateActiveNav('send-message');
         }
 
+        function showMassSend() {
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('send-message-section').style.display = 'none';
+            document.getElementById('mass-send-section').style.display = 'block';
+            document.getElementById('message-history-section').style.display = 'none';
+            document.getElementById('auto-reply-section').style.display = 'none';
+            updateActiveNav('mass-send');
+        }
+
         function showMessageHistory() {
             document.getElementById('dashboard-section').style.display = 'none';
             document.getElementById('send-message-section').style.display = 'none';
+            document.getElementById('mass-send-section').style.display = 'none';
             document.getElementById('message-history-section').style.display = 'block';
             document.getElementById('auto-reply-section').style.display = 'none';
             loadMessageHistory();
@@ -470,6 +530,7 @@
         function showAutoReply() {
             document.getElementById('dashboard-section').style.display = 'none';
             document.getElementById('send-message-section').style.display = 'none';
+            document.getElementById('mass-send-section').style.display = 'none';
             document.getElementById('message-history-section').style.display = 'none';
             document.getElementById('auto-reply-section').style.display = 'block';
             loadAutoReplies();
@@ -700,6 +761,78 @@
         // Initial load
         checkConnection();
         loadDashboardData();
+
+        // Fungsi untuk mengirim pesan massal
+        document.getElementById('mass-send-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const receivers = document.getElementById('receivers').value
+                .split(',')
+                .map(num => num.trim())
+                .filter(num => num);
+            const message = document.getElementById('mass-message').value;
+
+            if (receivers.length === 0) {
+                alert('Mohon masukkan minimal satu nomor penerima');
+                return;
+            }
+
+            if (!message) {
+                alert('Mohon masukkan pesan');
+                return;
+            }
+
+            // Tampilkan progress
+            const progressSection = document.getElementById('mass-send-progress');
+            const progressBar = progressSection.querySelector('.progress-bar');
+            const progressStatus = document.getElementById('progress-status');
+            const progressCount = document.getElementById('progress-count');
+            const progressDetails = document.getElementById('progress-details');
+            
+            progressSection.style.display = 'block';
+            progressBar.style.width = '0%';
+            progressStatus.textContent = 'Memulai pengiriman...';
+            progressCount.textContent = `0/${receivers.length}`;
+            progressDetails.innerHTML = '';
+
+            let successCount = 0;
+            let failCount = 0;
+
+            for (let i = 0; i < receivers.length; i++) {
+                try {
+                    const response = await fetch('http://localhost:3000/api/send-message', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ 
+                            receiver: receivers[i], 
+                            message: message 
+                        })
+                    });
+
+                    const data = await response.json();
+                    if (data.success) {
+                        successCount++;
+                        progressDetails.innerHTML += `<div class="text-success">✓ ${receivers[i]}: Berhasil</div>`;
+                    } else {
+                        failCount++;
+                        progressDetails.innerHTML += `<div class="text-danger">✗ ${receivers[i]}: ${data.message}</div>`;
+                    }
+                } catch (error) {
+                    failCount++;
+                    progressDetails.innerHTML += `<div class="text-danger">✗ ${receivers[i]}: Error</div>`;
+                }
+
+                // Update progress
+                const progress = ((i + 1) / receivers.length) * 100;
+                progressBar.style.width = `${progress}%`;
+                progressCount.textContent = `${i + 1}/${receivers.length}`;
+                progressStatus.textContent = `Mengirim pesan... (${successCount} berhasil, ${failCount} gagal)`;
+            }
+
+            progressStatus.textContent = `Selesai! ${successCount} berhasil, ${failCount} gagal`;
+            loadMessageHistory();
+        });
     </script>
 </body>
 
